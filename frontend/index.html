@@ -1,1 +1,88 @@
-<!-- Página CRUD de Alunos -->
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestão Académica</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <header>
+      <h1>Painel de Gestão Académica</h1>
+    </header>
+
+    <main class="grid-cards">
+      <!-- Card Cursos -->
+      <section class="card">
+        <div class="card-header">
+          <h2>Cursos</h2>
+          <button class="btn-circular" onclick="abrirModalCurso()" title="Adicionar Curso">+</button>
+        </div>
+        <ul id="lista-cursos" class="lista"></ul>
+      </section>
+
+      <!-- Card Alunos -->
+      <section class="card">
+        <div class="card-header">
+          <h2>Alunos</h2>
+          <button class="btn-circular" onclick="abrirModalAluno()" title="Adicionar Aluno">+</button>
+        </div>
+        <ul id="lista-alunos" class="lista"></ul>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal Curso (Adicionar / Editar) -->
+  <dialog id="modal-curso" class="modal">
+    <form id="form-curso" method="dialog">
+      <h3 id="modal-curso-titulo">Novo Curso</h3>
+      <input type="hidden" id="curso-id">
+      <div class="form-group">
+        <label for="curso-nome">Nome do Curso</label>
+        <input type="text" id="curso-nome" required autocomplete="off">
+      </div>
+      <div class="modal-acoes">
+        <button type="button" class="btn-secundario" onclick="fecharModal('modal-curso')">Cancelar</button>
+        <button type="submit" class="btn-primario">Guardar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Modal Aluno (Adicionar / Editar) -->
+  <dialog id="modal-aluno" class="modal">
+    <form id="form-aluno" method="dialog">
+      <h3 id="modal-aluno-titulo">Novo Aluno</h3>
+      <input type="hidden" id="aluno-id">
+      <div class="form-group">
+        <label for="aluno-nome">Nome do Aluno</label>
+        <input type="text" id="aluno-nome" required autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label for="aluno-curso-id">Curso</label>
+        <select id="aluno-curso-id" required></select>
+      </div>
+      <div class="modal-acoes">
+        <button type="button" class="btn-secundario" onclick="fecharModal('modal-aluno')">Cancelar</button>
+        <button type="submit" class="btn-primario">Guardar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Modal Ver Participantes do Curso -->
+  <dialog id="modal-participantes" class="modal">
+    <div class="modal-conteudo">
+      <h3 id="modal-participantes-titulo">Participantes</h3>
+      <ul id="lista-participantes" class="lista-simples"></ul>
+      <div class="modal-acoes">
+        <button type="button" class="btn-secundario" onclick="fecharModal('modal-participantes')">Fechar</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Notificação Toast (Canto Inferior Direito) -->
+  <div id="toast" class="toast"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,6 +1,4 @@
-const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-  ? 'http://localhost:5000'
-  : 'https://api-escola-sir.onrender.com';
+const API_URL = 'https://api-escola-sir.onrender.com';
 
 let cursosCache = [];
 let alunosCache = [];

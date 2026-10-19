@@ -10,20 +10,21 @@ const alunoController = require('../controllers/alunoController');
  *       type: object
  *       required:
  *         - nome
- *         - apelido
- *         - idCurso
- *         - anoCurricular
  *       properties:
  *         id:
  *           type: string
+ *           readOnly: true
  *         nome:
  *           type: string
  *         apelido:
  *           type: string
  *         idCurso:
  *           type: string
+ *           nullable: true
+ *           description: ID de um curso existente (ou null para sem curso)
  *         anoCurricular:
  *           type: integer
+ *           minimum: 1
  */
 
 /**
@@ -31,11 +32,15 @@ const alunoController = require('../controllers/alunoController');
  * /alunos:
  *   get:
  *     summary: Lista todos os alunos
+ *     tags:
+ *       - Alunos
  *     responses:
  *       200:
  *         description: Lista devolvida com sucesso
  *   post:
  *     summary: Adiciona um novo aluno
+ *     tags:
+ *       - Alunos
  *     requestBody:
  *       required: true
  *       content:
@@ -45,6 +50,10 @@ const alunoController = require('../controllers/alunoController');
  *     responses:
  *       201:
  *         description: Aluno criado
+ *       400:
+ *         description: Dados inválidos
+ *       404:
+ *         description: Curso indicado não existe
  */
 router.route('/')
   .get(alunoController.getAlunos)
@@ -55,6 +64,8 @@ router.route('/')
  * /alunos/{id}:
  *   get:
  *     summary: Obtém um aluno por ID
+ *     tags:
+ *       - Alunos
  *     parameters:
  *       - in: path
  *         name: id
@@ -67,7 +78,9 @@ router.route('/')
  *       404:
  *         description: Não encontrado
  *   put:
- *     summary: Atualiza um aluno por ID
+ *     summary: Atualiza um aluno por ID (inclui associar/alterar o curso)
+ *     tags:
+ *       - Alunos
  *     parameters:
  *       - in: path
  *         name: id
@@ -83,8 +96,12 @@ router.route('/')
  *     responses:
  *       200:
  *         description: Aluno atualizado
+ *       404:
+ *         description: Aluno ou curso não encontrado
  *   delete:
  *     summary: Apaga um aluno por ID
+ *     tags:
+ *       - Alunos
  *     parameters:
  *       - in: path
  *         name: id

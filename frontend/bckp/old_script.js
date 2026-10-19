@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000';
+const API_URL = 'https://api-escola-sir.onrender.com';
 
 let cursosCache = [];
 let alunosCache = [];

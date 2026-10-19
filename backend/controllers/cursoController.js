@@ -1,5 +1,8 @@
+const mongoose = require('mongoose');
 const Curso = require('../models/Curso');
 const Aluno = require('../models/Aluno');
+
+const idValido = (id) => mongoose.isValidObjectId(id);
 
 exports.getCursos = async (req, res) => {
   try {
@@ -7,6 +10,17 @@ exports.getCursos = async (req, res) => {
     res.status(200).json(cursos);
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getCursoById = async (req, res) => {
+  try {
+    if (!idValido(req.params.id)) return res.status(400).json({ message: 'ID inválido' });
+    const curso = await Curso.findById(req.params.id);
+    if (!curso) return res.status(404).json({ message: 'Curso não encontrado' });
+    res.status(200).json(curso);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
   }
 };
 
@@ -23,7 +37,13 @@ exports.createCurso = async (req, res) => {
 exports.updateCurso = async (req, res) => {
   try {
     const nome = req.body.nome || req.body.nomeDoCurso;
-    const curso = await Curso.findByIdAndUpdate(req.params.id, { nome }, { new: true });
+    if (!nome) return res.status(400).json({ message: 'O nome do curso é obrigatório' });
+
+    const curso = await Curso.findByIdAndUpdate(
+      req.params.id,
+      { nome },
+      { new: true, runValidators: true }
+    );
     if (!curso) return res.status(404).json({ message: 'Curso não encontrado' });
     res.status(200).json(curso);
   } catch (error) {
@@ -33,6 +53,8 @@ exports.updateCurso = async (req, res) => {
 
 exports.deleteCurso = async (req, res) => {
   try {
+    if (!idValido(req.params.id)) return res.status(400).json({ message: 'ID inválido' });
+
     const totalAlunos = await Aluno.countDocuments({ idCurso: req.params.id });
     if (totalAlunos > 0) {
       return res.status(409).json({ message: 'Existem alunos matriculados neste curso.' });
@@ -47,6 +69,10 @@ exports.deleteCurso = async (req, res) => {
 
 exports.getAlunosDoCurso = async (req, res) => {
   try {
+    if (!idValido(req.params.id)) return res.status(400).json({ message: 'ID inválido' });
+    const existe = await Curso.exists({ _id: req.params.id });
+    if (!existe) return res.status(404).json({ message: 'Curso não encontrado' });
+
     const alunos = await Aluno.find({ idCurso: req.params.id });
     res.status(200).json(alunos);
   } catch (error) {

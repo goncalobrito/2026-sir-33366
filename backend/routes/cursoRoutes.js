@@ -13,6 +13,7 @@ const cursoController = require('../controllers/cursoController');
  *       properties:
  *         id:
  *           type: string
+ *           readOnly: true
  *           description: ID gerado automaticamente
  *         nome:
  *           type: string
@@ -50,6 +51,21 @@ router.route('/')
 /**
  * @openapi
  * /cursos/{id}:
+ *   get:
+ *     summary: Obtém um curso por ID
+ *     tags:
+ *       - Cursos
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Curso encontrado
+ *       404:
+ *         description: Curso não encontrado
  *   put:
  *     summary: Atualiza o nome de um curso
  *     tags:
@@ -88,6 +104,7 @@ router.route('/')
  *         description: Conflito - existem alunos vinculados ao curso
  */
 router.route('/:id')
+  .get(cursoController.getCursoById)
   .put(cursoController.updateCurso)
   .delete(cursoController.deleteCurso);
 
@@ -107,6 +124,8 @@ router.route('/:id')
  *     responses:
  *       200:
  *         description: Lista de alunos associados ao curso
+ *       404:
+ *         description: Curso não encontrado
  */
 router.get('/:id/alunos', cursoController.getAlunosDoCurso);
 

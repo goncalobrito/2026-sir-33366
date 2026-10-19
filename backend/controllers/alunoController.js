@@ -1,4 +1,36 @@
+const mongoose = require('mongoose');
 const Aluno = require('../models/Aluno');
+const Curso = require('../models/Curso');
+
+class ErroHttp extends Error {
+  constructor(status, message) {
+    super(message);
+    this.status = status;
+  }
+}
+
+// Aceita idCurso (oficial) e alguns nomes alternativos que o frontend possa enviar.
+// Se vier um objeto (ex.: o curso inteiro), usa o respetivo id.
+const lerIdCurso = (body) => {
+  let valor = body.idCurso;
+  if (valor === undefined) valor = body.cursoId;
+  if (valor === undefined) valor = body.curso;
+  if (valor && typeof valor === 'object') valor = valor.id || valor._id;
+  return valor;
+};
+
+// Devolve o id do curso (string) ou null (sem curso). Lança erro se for inválido/inexistente.
+const resolverCurso = async (valor) => {
+  if (valor === null || valor === '' || valor === 'null') return null;
+  const id = String(valor).trim();
+  if (!mongoose.isValidObjectId(id)) throw new ErroHttp(400, 'idCurso inválido');
+  const existe = await Curso.exists({ _id: id });
+  if (!existe) throw new ErroHttp(404, 'Curso não encontrado');
+  return id;
+};
+
+const responderErro = (res, error) =>
+  res.status(error.status || 400).json({ message: error.message });
 
 exports.getAlunos = async (req, res) => {
   try {
@@ -21,25 +53,40 @@ exports.getAlunoById = async (req, res) => {
 
 exports.createAluno = async (req, res) => {
   try {
-    const { nome, apelido, idCurso, anoCurricular } = req.body;
-    const novoAluno = await Aluno.create({ nome, apelido, idCurso, anoCurricular });
+    const { nome, apelido, anoCurricular } = req.body;
+    const idCurso = await resolverCurso(lerIdCurso(req.body) ?? null);
+
+    const dados = { nome, idCurso };
+    if (apelido !== undefined) dados.apelido = apelido;
+    if (anoCurricular !== undefined) dados.anoCurricular = anoCurricular;
+
+    const novoAluno = await Aluno.create(dados);
     res.status(201).json(novoAluno);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    responderErro(res, error);
   }
 };
 
 exports.updateAluno = async (req, res) => {
   try {
+    // Só campos permitidos (evita alterar _id, __v, etc.)
+    const dados = {};
+    for (const campo of ['nome', 'apelido', 'anoCurricular']) {
+      if (req.body[campo] !== undefined) dados[campo] = req.body[campo];
+    }
+
+    const idCurso = lerIdCurso(req.body);
+    if (idCurso !== undefined) dados.idCurso = await resolverCurso(idCurso);
+
     const alunoAtualizado = await Aluno.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      dados,
       { new: true, runValidators: true }
     );
     if (!alunoAtualizado) return res.status(404).json({ message: 'Aluno não encontrado' });
     res.status(200).json(alunoAtualizado);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    responderErro(res, error);
   }
 };
 

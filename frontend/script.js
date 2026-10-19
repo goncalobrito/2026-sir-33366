@@ -130,24 +130,24 @@ function renderizarCursos(filtro = '') {
 
   filtrados.forEach(curso => {
     const item = document.createElement('div');
-    item.className = 'flex items-center justify-between p-space-md bg-black border border-white/30 hover:border-white transition-all shadow-[0_0_8px_rgba(255,255,255,0.15)] group';
+    item.className = 'flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-space-md bg-black border border-white/30 hover:border-white transition-all shadow-[0_0_8px_rgba(255,255,255,0.15)] group';
     item.innerHTML = `
-      <div class="flex flex-col gap-0.5 min-w-0 pr-space-sm">
+      <div class="flex flex-col gap-0.5 min-w-0 sm:pr-space-sm">
         <span class="font-headline-sm text-body-lg font-medium text-white truncate tracking-tight">${curso.nome}</span>
-        <div class="flex items-center gap-space-sm font-label-code text-label-meta text-on-surface-variant">
+        <div class="flex flex-wrap items-center gap-x-space-sm font-label-code text-label-meta text-on-surface-variant">
           <span class="text-white/90">ID #${curso.id}</span>
           <span>/</span>
           <span id="contagem-curso-${curso.id}" class="uppercase tracking-wider text-white">${curso.totalAlunos || 0} Aluno(s) ativos</span>
         </div>
       </div>
-      <div class="flex items-center gap-space-xs shrink-0">
-        <button class="px-2 h-9 bg-neutral-900 border border-white/40 text-white font-label-code text-[11px] uppercase hover:bg-neutral-800 transition-colors cursor-pointer" onclick="verParticipantes('${curso.id}', '${curso.nome}')" title="Ver Participantes">
+      <div class="flex items-center gap-space-xs sm:shrink-0 self-end sm:self-auto">
+        <button class="px-3 h-10 sm:h-9 bg-neutral-900 border border-white/40 text-white font-label-code text-[11px] uppercase hover:bg-neutral-800 transition-colors cursor-pointer" onclick="verParticipantes('${curso.id}', '${curso.nome}')" title="Ver Participantes">
           Alunos
         </button>
-        <button class="w-9 h-9 bg-white text-black flex items-center justify-center rounded-none hover:bg-neutral-200 active:scale-90 transition-transform cursor-pointer" onclick="abrirModalCurso('${curso.id}')" title="Editar ${curso.nome}">
+        <button class="w-10 h-10 sm:w-9 sm:h-9 bg-white text-black flex items-center justify-center rounded-none hover:bg-neutral-200 active:scale-90 transition-transform cursor-pointer" onclick="abrirModalCurso('${curso.id}')" title="Editar ${curso.nome}">
           <span class="material-symbols-outlined text-[18px]">edit</span>
         </button>
-        <button class="w-9 h-9 bg-white text-black flex items-center justify-center rounded-none hover:bg-[#FF3344] hover:text-white active:scale-90 transition-all cursor-pointer" onclick="tentarEliminarCurso('${curso.id}', '${curso.nome}', ${curso.totalAlunos || 0})" title="Eliminar Curso">
+        <button class="w-10 h-10 sm:w-9 sm:h-9 bg-white text-black flex items-center justify-center rounded-none hover:bg-[#FF3344] hover:text-white active:scale-90 transition-all cursor-pointer" onclick="tentarEliminarCurso('${curso.id}', '${curso.nome}', ${curso.totalAlunos || 0})" title="Eliminar Curso">
           <span class="material-symbols-outlined text-[18px]">delete</span>
         </button>
       </div>
@@ -283,21 +283,21 @@ function renderizarAlunos(filtro = '') {
     const nomeCurso = curso ? curso.nome : (idC ? `ID #${idC}` : 'SEM DISCIPLINA');
 
     const item = document.createElement('div');
-    item.className = 'flex items-center justify-between p-space-md bg-black border border-white/30 hover:border-white transition-all shadow-[0_0_8px_rgba(255,255,255,0.15)] group';
+    item.className = 'flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-space-md bg-black border border-white/30 hover:border-white transition-all shadow-[0_0_8px_rgba(255,255,255,0.15)] group';
     item.innerHTML = `
-      <div class="flex flex-col gap-0.5 min-w-0 pr-space-sm">
+      <div class="flex flex-col gap-0.5 min-w-0 sm:pr-space-sm">
         <span class="font-headline-sm text-body-lg font-medium text-white truncate tracking-tight">${aluno.nome}</span>
-        <div class="flex items-center gap-space-sm font-label-code text-label-meta text-on-surface-variant">
+        <div class="flex flex-wrap items-center gap-x-space-sm font-label-code text-label-meta text-on-surface-variant">
           <span class="text-white/90">ID #${aluno.id}</span>
           <span>/</span>
           <span class="uppercase tracking-wider truncate text-white">${nomeCurso}</span>
         </div>
       </div>
-      <div class="flex items-center gap-space-xs shrink-0">
-        <button class="w-9 h-9 bg-white text-black flex items-center justify-center rounded-none hover:bg-neutral-200 active:scale-90 transition-transform cursor-pointer" onclick="abrirModalAluno('${aluno.id}')" title="Editar ${aluno.nome}">
+      <div class="flex items-center gap-space-xs sm:shrink-0 self-end sm:self-auto">
+        <button class="w-10 h-10 sm:w-9 sm:h-9 bg-white text-black flex items-center justify-center rounded-none hover:bg-neutral-200 active:scale-90 transition-transform cursor-pointer" onclick="abrirModalAluno('${aluno.id}')" title="Editar ${aluno.nome}">
           <span class="material-symbols-outlined text-[18px]">edit</span>
         </button>
-        <button class="w-9 h-9 bg-white text-black flex items-center justify-center rounded-none hover:bg-[#FF3344] hover:text-white active:scale-90 transition-all cursor-pointer" onclick="eliminarAluno('${aluno.id}')" title="Eliminar Aluno">
+        <button class="w-10 h-10 sm:w-9 sm:h-9 bg-white text-black flex items-center justify-center rounded-none hover:bg-[#FF3344] hover:text-white active:scale-90 transition-all cursor-pointer" onclick="eliminarAluno('${aluno.id}')" title="Eliminar Aluno">
           <span class="material-symbols-outlined text-[18px]">delete</span>
         </button>
       </div>

@@ -2,7 +2,7 @@
 <html class="dark" lang="pt-BR">
 <head>
   <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
   <meta content="web_dashboard" name="shell-type"/>
   <title>ACADÊMICO // CRUD</title>
   
@@ -16,7 +16,9 @@
   <style>
     @layer base {
       html, body { margin: 0; padding: 0; }
-      body { overscroll-behavior: none; }
+      body { overscroll-behavior: none; overflow-x: hidden; }
+      input, select, textarea { font-size: 16px !important; }
+      @media (min-width: 1024px) { input, select, textarea { font-size: 13px !important; } }
       main > :first-child { margin-top: 0 !important; }
       main > :last-child { margin-bottom: 0 !important; }
     }
@@ -122,7 +124,8 @@
 <body class="bg-surface font-body-sm text-on-surface antialiased selection:bg-primary selection:text-surface">
   
   <!-- Sidebar -->
-  <aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest z-50 flex flex-col justify-between border-r border-outline-variant/30">
+  <div id="sidebarOverlay" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 hidden lg:hidden" onclick="toggleSidebar(false)"></div>
+  <aside id="sidebar" class="fixed left-0 top-0 h-full w-64 max-w-[80vw] bg-surface-container-lowest z-50 flex flex-col justify-between border-r border-outline-variant/30 -translate-x-full lg:translate-x-0 transition-transform duration-300">
     <div class="flex flex-col">
       <div class="h-16 px-gutter flex items-center gap-space-sm border-b border-outline-variant/20">
         <div class="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(255,255,255,0.9)] animate-pulse"></div>
@@ -132,7 +135,7 @@
         <span class="font-label-meta text-label-meta text-on-surface-variant uppercase tracking-widest">Navegação Central</span>
       </div>
       <nav class="flex flex-col gap-space-xs px-space-sm">
-        <a class="flex items-center gap-space-sm px-space-sm py-space-sm bg-surface-container-high text-primary font-medium shadow-[inset_0_0_0_1px_rgba(255,255,255,0.3)] font-label-code text-label-code uppercase" href="#">
+        <a class="flex items-center gap-space-sm px-space-sm py-space-sm bg-surface-container-high text-primary font-medium shadow-[inset_0_0_0_1px_rgba(255,255,255,0.3)] font-label-code text-label-code uppercase" href="#" onclick="toggleSidebar(false)">
           <span class="material-symbols-outlined text-[18px]">grid_view</span>Painel Geral
         </a>
       </nav>
@@ -150,21 +153,22 @@
   </aside>
 
   <!-- Container Principal -->
-  <div class="pl-64">
+  <div class="lg:pl-64">
     <!-- Header -->
-    <header class="fixed top-0 left-64 right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-xl border-b border-outline-variant/30 z-40 flex items-center justify-between px-gutter">
-      <div class="flex items-center gap-space-md">
-        <div class="flex items-center gap-space-xs font-label-meta text-label-meta uppercase tracking-widest text-on-surface-variant">
-          <span>SYS</span><span class="text-outline">/</span><span>ACADÊMICO</span><span class="text-outline">/</span><span class="text-primary font-bold">PAINEL DE GESTÃO</span>
+    <header class="fixed top-0 left-0 lg:left-64 right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-xl border-b border-outline-variant/30 z-30 flex items-center justify-between px-4 sm:px-gutter gap-2">
+      <div class="flex items-center gap-space-sm sm:gap-space-md min-w-0">
+        <button type="button" class="lg:hidden w-10 h-10 shrink-0 flex items-center justify-center border border-white/30 text-white" onclick="toggleSidebar()" aria-label="Abrir menu"><span class="material-symbols-outlined text-[22px]">menu</span></button>
+        <div class="flex items-center gap-space-xs font-label-meta text-label-meta uppercase tracking-widest text-on-surface-variant whitespace-nowrap">
+          <span class="hidden sm:inline">SYS</span><span class="text-outline hidden sm:inline">/</span><span class="hidden sm:inline">ACADÊMICO</span><span class="text-outline hidden sm:inline">/</span><span class="text-primary font-bold">PAINEL DE GESTÃO</span>
         </div>
-        <div class="h-4 w-[1px] bg-outline-variant/40 hidden md:block"></div>
-        <div class="hidden md:flex items-center gap-space-xs">
+        <div class="h-4 w-[1px] bg-outline-variant/40 hidden xl:block"></div>
+        <div class="hidden xl:flex items-center gap-space-xs">
           <div class="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_6px_rgba(255,255,255,0.8)]"></div>
           <span class="font-label-meta text-label-meta text-on-surface-variant uppercase tracking-wider">SYNCHRONIZED // BD.JSON</span>
         </div>
       </div>
-      <div class="flex items-center gap-space-md">
-        <div class="flex items-center gap-space-xs font-label-code text-label-code px-space-sm py-space-xs bg-surface-container-low border border-outline-variant/40 text-on-surface-variant">
+      <div class="flex items-center gap-space-sm sm:gap-space-md shrink-0">
+        <div class="hidden sm:flex items-center gap-space-xs font-label-code text-label-code px-space-sm py-space-xs bg-surface-container-low border border-outline-variant/40 text-on-surface-variant">
           <span class="material-symbols-outlined text-[16px]">terminal</span><span>SYS_OPS</span>
         </div>
         <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
@@ -174,18 +178,18 @@
     </header>
 
     <!-- Main Content -->
-    <main class="relative pt-16 bg-surface min-h-screen px-gutter py-space-lg w-full">
+    <main class="relative pt-16 bg-surface min-h-screen px-4 sm:px-gutter py-space-md sm:py-space-lg w-full">
       <div class="flex flex-col w-full">
         
         <!-- Ribbon de Métricas -->
-        <section class="grid grid-cols-1 md:grid-cols-4 gap-space-md mb-space-xl">
+        <section class="grid grid-cols-2 lg:grid-cols-4 gap-space-sm sm:gap-space-md mb-space-lg sm:mb-space-xl">
           <div class="p-space-md bg-[#080808] border border-white/20 flex flex-col justify-between shadow-[0_0_10px_rgba(255,255,255,0.08)]">
             <div class="flex items-center justify-between">
               <span class="font-label-meta text-label-meta text-on-surface-variant uppercase tracking-widest">Base Geral // Alunos</span>
               <span class="material-symbols-outlined text-primary text-[18px]">group</span>
             </div>
-            <div class="mt-space-sm flex items-baseline justify-between">
-              <span class="font-display text-display text-primary font-semibold" id="metricTotalAlunos">0</span>
+            <div class="mt-space-sm flex flex-wrap items-baseline justify-between gap-1">
+              <span class="font-display text-headline-lg-mobile md:text-display text-primary font-semibold" id="metricTotalAlunos">0</span>
               <span class="font-label-meta text-label-meta text-primary/80 uppercase px-space-xs py-[2px] border border-white/30">Total Ativo</span>
             </div>
           </div>
@@ -195,8 +199,8 @@
               <span class="font-label-meta text-label-meta text-on-surface-variant uppercase tracking-widest">Ofertas // Cursos</span>
               <span class="material-symbols-outlined text-primary text-[18px]">menu_book</span>
             </div>
-            <div class="mt-space-sm flex items-baseline justify-between">
-              <span class="font-display text-display text-primary font-semibold" id="metricTotalCursos">0</span>
+            <div class="mt-space-sm flex flex-wrap items-baseline justify-between gap-1">
+              <span class="font-display text-headline-lg-mobile md:text-display text-primary font-semibold" id="metricTotalCursos">0</span>
               <span class="font-label-meta text-label-meta text-primary/80 uppercase px-space-xs py-[2px] border border-white/30">Disciplinas</span>
             </div>
           </div>
@@ -206,8 +210,8 @@
               <span class="font-label-meta text-label-meta text-on-surface-variant uppercase tracking-widest">Regularidade Cadastral</span>
               <span class="material-symbols-outlined text-primary text-[18px]">verified</span>
             </div>
-            <div class="mt-space-sm flex items-baseline justify-between">
-              <span class="font-display text-display text-primary font-semibold">100%</span>
+            <div class="mt-space-sm flex flex-wrap items-baseline justify-between gap-1">
+              <span class="font-display text-headline-lg-mobile md:text-display text-primary font-semibold">100%</span>
               <span class="font-label-meta text-label-meta text-primary/80 uppercase px-space-xs py-[2px] border border-white/30">Sincronizado</span>
             </div>
           </div>
@@ -217,19 +221,19 @@
               <span class="font-label-meta text-label-meta text-on-surface-variant uppercase tracking-widest">Auditoria Operacional</span>
               <div class="w-2 h-2 rounded-full bg-white shadow-[0_0_8px_#ffffff] animate-ping"></div>
             </div>
-            <div class="mt-space-sm flex items-baseline justify-between">
-              <span class="font-headline-sm text-headline-sm text-primary uppercase font-mono tracking-tight">SEM FALHAS</span>
+            <div class="mt-space-sm flex flex-wrap items-baseline justify-between gap-1">
+              <span class="font-headline-sm text-body-sm sm:text-headline-sm text-primary uppercase font-mono tracking-tight">SEM FALHAS</span>
               <span class="font-label-meta text-label-meta text-on-surface-variant uppercase">0.12ms LAT</span>
             </div>
           </div>
         </section>
 
         <!-- Command Center Columns -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-space-xl items-start pb-space-xl">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-space-lg lg:gap-space-xl items-start pb-space-lg lg:pb-space-xl">
           
           <!-- CARD 1: ALUNOS CRUD -->
-          <div class="relative bg-[#080808] border-2 border-[#ffffff] rounded-[20px] p-[28px] shadow-[0_0_15px_rgba(255,255,255,0.7),0_0_30px_rgba(255,255,255,0.3)] transition-all duration-200">
-            <div class="flex items-center justify-between pb-space-md border-b border-white/20 mb-space-lg">
+          <div class="relative bg-[#080808] border-2 border-[#ffffff] rounded-[20px] p-4 sm:p-[28px] shadow-[0_0_15px_rgba(255,255,255,0.7),0_0_30px_rgba(255,255,255,0.3)] transition-all duration-200">
+            <div class="flex flex-wrap items-center justify-between gap-3 pb-space-md border-b border-white/20 mb-space-lg">
               <div class="flex flex-col gap-1">
                 <span class="font-label-meta text-label-meta uppercase tracking-widest text-on-surface-variant">Painel de Alocação</span>
                 <h2 class="font-headline-sm text-headline-sm text-primary uppercase font-bold tracking-tight">ALUNOS // REGISTROS</h2>
@@ -258,8 +262,8 @@
           </div>
 
           <!-- CARD 2: CURSOS CRUD -->
-          <div class="relative bg-[#080808] border-2 border-[#ffffff] rounded-[20px] p-[28px] shadow-[0_0_15px_rgba(255,255,255,0.7),0_0_30px_rgba(255,255,255,0.3)] transition-all duration-200">
-            <div class="flex items-center justify-between pb-space-md border-b border-white/20 mb-space-lg">
+          <div class="relative bg-[#080808] border-2 border-[#ffffff] rounded-[20px] p-4 sm:p-[28px] shadow-[0_0_15px_rgba(255,255,255,0.7),0_0_30px_rgba(255,255,255,0.3)] transition-all duration-200">
+            <div class="flex flex-wrap items-center justify-between gap-3 pb-space-md border-b border-white/20 mb-space-lg">
               <div class="flex flex-col gap-1">
                 <span class="font-label-meta text-label-meta uppercase tracking-widest text-on-surface-variant">Grade Acadêmica</span>
                 <h2 class="font-headline-sm text-headline-sm text-primary uppercase font-bold tracking-tight">CURSOS // ATIVOS</h2>
@@ -290,7 +294,7 @@
         </div>
 
         <!-- Terminal Diagnostics Footer Bar -->
-        <div class="w-full p-space-md bg-[#080808] border border-white/20 flex flex-col md:flex-row items-center justify-between gap-space-md mb-space-xl">
+        <div class="w-full p-space-md bg-[#080808] border border-white/20 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-space-md mb-space-xl">
           <div class="flex items-center gap-space-md">
             <span class="material-symbols-outlined text-white text-[20px]">database</span>
             <div class="flex flex-col">
@@ -299,15 +303,15 @@
             </div>
           </div>
           <div class="flex items-center gap-space-sm">
-            <button class="px-space-md py-space-xs border border-white/40 text-white font-label-code text-label-code uppercase hover:border-white hover:bg-white/10 transition-colors" onclick="recarregarTudo()">
+            <button class="w-full md:w-auto px-space-md py-2 border border-white/40 text-white font-label-code text-label-code uppercase hover:border-white hover:bg-white/10 transition-colors" onclick="recarregarTudo()">
               Recarregar Dados
             </button>
           </div>
         </div>
 
         <!-- RED GLOWING DELETE WARNING (Anchored at bottom-right corner) -->
-        <aside class="fixed bottom-8 right-8 z-50 transition-all duration-300 transform translate-y-6 opacity-0 pointer-events-none" id="criticalDeleteWarning" role="alert">
-          <div class="bg-[rgba(20,0,4,0.95)] border-2 border-[#FF3344] rounded-[14px] p-[18px_24px] max-w-[380px] shadow-[0_0_25px_rgba(255,51,68,0.65),0_0_50px_rgba(255,51,68,0.3)] backdrop-blur-md flex flex-col gap-space-sm">
+        <aside class="fixed bottom-4 right-4 left-4 sm:left-auto sm:bottom-8 sm:right-8 z-[60] transition-all duration-300 transform translate-y-6 opacity-0 pointer-events-none" id="criticalDeleteWarning" role="alert">
+          <div class="bg-[rgba(20,0,4,0.95)] border-2 border-[#FF3344] rounded-[14px] p-[18px_24px] sm:max-w-[380px] w-full shadow-[0_0_25px_rgba(255,51,68,0.65),0_0_50px_rgba(255,51,68,0.3)] backdrop-blur-md flex flex-col gap-space-sm">
             <div class="flex items-start gap-space-sm">
               <span class="material-symbols-outlined text-[#FF3344] text-[24px] shrink-0 animate-pulse mt-0.5">error</span>
               <div class="flex flex-col">
@@ -330,7 +334,7 @@
   </div>
 
   <!-- MODAL CURSO (Adicionar / Editar) -->
-  <dialog id="modalCurso" class="bg-[#080808] border-2 border-white rounded-[16px] p-6 max-w-md w-full text-white shadow-[0_0_30px_rgba(255,255,255,0.4)]">
+  <dialog id="modalCurso" class="bg-[#080808] border-2 border-white rounded-[16px] p-4 sm:p-6 max-w-md w-[calc(100%-2rem)] max-h-[90vh] overflow-y-auto m-auto text-white shadow-[0_0_30px_rgba(255,255,255,0.4)]">
     <form id="formCurso" method="dialog" class="flex flex-col gap-4">
       <div class="flex items-center justify-between border-b border-white/20 pb-3">
         <h3 id="modalCursoTitle" class="font-headline-sm uppercase font-bold text-lg">Criar Disciplina</h3>
@@ -349,7 +353,7 @@
   </dialog>
 
   <!-- MODAL ALUNO (Adicionar / Editar) -->
-  <dialog id="modalAluno" class="bg-[#080808] border-2 border-white rounded-[16px] p-6 max-w-md w-full text-white shadow-[0_0_30px_rgba(255,255,255,0.4)]">
+  <dialog id="modalAluno" class="bg-[#080808] border-2 border-white rounded-[16px] p-4 sm:p-6 max-w-md w-[calc(100%-2rem)] max-h-[90vh] overflow-y-auto m-auto text-white shadow-[0_0_30px_rgba(255,255,255,0.4)]">
     <form id="formAluno" method="dialog" class="flex flex-col gap-4">
       <div class="flex items-center justify-between border-b border-white/20 pb-3">
         <h3 id="modalAlunoTitle" class="font-headline-sm uppercase font-bold text-lg">Registrar Aluno</h3>
@@ -372,7 +376,7 @@
   </dialog>
 
   <!-- MODAL PARTICIPANTES (Alunos do Curso) -->
-  <dialog id="modalParticipantes" class="bg-[#080808] border-2 border-white rounded-[16px] p-6 max-w-md w-full text-white shadow-[0_0_30px_rgba(255,255,255,0.4)]">
+  <dialog id="modalParticipantes" class="bg-[#080808] border-2 border-white rounded-[16px] p-4 sm:p-6 max-w-md w-[calc(100%-2rem)] max-h-[90vh] overflow-y-auto m-auto text-white shadow-[0_0_30px_rgba(255,255,255,0.4)]">
     <div class="flex flex-col gap-4">
       <div class="flex items-center justify-between border-b border-white/20 pb-3">
         <h3 id="modalParticipantesTitle" class="font-headline-sm uppercase font-bold text-lg">Participantes</h3>
@@ -385,6 +389,18 @@
     </div>
   </dialog>
 
+  <script>
+    function toggleSidebar(force) {
+      const sb = document.getElementById('sidebar');
+      const ov = document.getElementById('sidebarOverlay');
+      const open = typeof force === 'boolean' ? force : sb.classList.contains('-translate-x-full');
+      sb.classList.toggle('-translate-x-full', !open);
+      ov.classList.toggle('hidden', !open);
+    }
+    window.toggleSidebar = toggleSidebar;
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') toggleSidebar(false); });
+    window.addEventListener('resize', () => { if (window.innerWidth >= 1024) toggleSidebar(false); });
+  </script>
   <script src="script.js"></script>
 </body>
 </html>

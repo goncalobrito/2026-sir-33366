@@ -153,6 +153,6 @@ router.get('/:id/alunos', cursoController.getAlunosDoCurso);
  *       404:
  *         description: Aluno não encontrado neste curso
  */
-router.delete('/:id/alunos/:alunoId', cursoController.removerAlunoDoCurso);
+router.delete('/:id/alunos/:alunoId', cursoController.deletefromCurso);
 
 module.exports = router;

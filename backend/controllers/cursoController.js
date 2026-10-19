@@ -67,6 +67,28 @@ exports.deleteCurso = async (req, res) => {
   }
 };
 
+exports.deletefromCurso = async (req, res) => {
+  try {
+    const { id, alunoId } = req.params;
+    if (!idValido(id) || !idValido(alunoId)) {
+      return res.status(400).json({ message: 'ID inválido' });
+    }
+
+    // Só altera se o aluno pertencer mesmo a este curso
+    const aluno = await Aluno.findOneAndUpdate(
+      { _id: alunoId, idCurso: id },
+      { idCurso: null },
+      { new: true }
+    );
+    if (!aluno) {
+      return res.status(404).json({ message: 'Aluno não encontrado neste curso' });
+    }
+    res.status(200).json(aluno);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
 exports.getAlunosDoCurso = async (req, res) => {
   try {
     if (!idValido(req.params.id)) return res.status(400).json({ message: 'ID inválido' });

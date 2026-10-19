@@ -129,4 +129,30 @@ router.route('/:id')
  */
 router.get('/:id/alunos', cursoController.getAlunosDoCurso);
 
+/**
+ * @openapi
+ * /cursos/{id}/alunos/{alunoId}:
+ *   delete:
+ *     summary: Remove um aluno de um curso (o aluno fica sem curso)
+ *     tags:
+ *       - Cursos
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: alunoId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Aluno removido do curso
+ *       404:
+ *         description: Aluno não encontrado neste curso
+ */
+router.delete('/:id/alunos/:alunoId', cursoController.removerAlunoDoCurso);
+
 module.exports = router;

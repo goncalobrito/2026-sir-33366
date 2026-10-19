@@ -244,12 +244,33 @@ async function tentarEliminarCurso(id) {
   }
 }
 
+async function expulsarAluno(cursoId, alunoId) {
+  const aluno = alunosCache.find(a => String(a.id) === String(alunoId));
+  const curso = cursosCache.find(c => String(c.id) === String(cursoId));
+  if (!confirm(`Remover ${aluno ? aluno.nome : 'este aluno'} do curso ${curso ? curso.nome : ''}?`)) return;
+
+  try {
+    const res = await fetch(`${API_URL}/cursos/${cursoId}/alunos/${alunoId}`, { method: 'DELETE' });
+    if (!res.ok) {
+      alert(`Não foi possível remover o aluno: ${await lerErro(res)}`);
+      return;
+    }
+    await recarregarTudo();          // atualiza contagens e lista de alunos
+    verParticipantes(cursoId);       // refresca o modal aberto
+  } catch (err) {
+    console.error('[ERRO] Expulsar aluno:', err);
+    alert('Erro de ligação ao servidor.');
+  }
+}
+
+window.expulsarAluno = expulsarAluno;
+
 async function verParticipantes(cursoId) {
   const curso = cursosCache.find(c => String(c.id) === String(cursoId));
   document.getElementById('modalParticipantesTitle').textContent = `Participantes // ${curso ? curso.nome : cursoId}`;
   const corpo = document.getElementById('listaParticipantesCorpo');
   corpo.innerHTML = '<li class="text-neutral-500 py-2">Consultando registros...</li>';
-  modalParticipantes.showModal();
+  if (!modalParticipantes.open) modalParticipantes.showModal();
 
   try {
     const res = await fetch(`${API_URL}/cursos/${cursoId}/alunos`);
@@ -263,7 +284,16 @@ async function verParticipantes(cursoId) {
       alunos.forEach(aluno => {
         const li = document.createElement('li');
         li.className = 'p-2 bg-black border border-white/20 flex justify-between items-center';
-        li.innerHTML = `<span class="text-white font-medium">${esc(aluno.nome)}</span><span class="text-neutral-500">ID #${esc(aluno.id)}</span>`;
+        li.innerHTML = `
+  <div class="flex flex-col min-w-0">
+    <span class="text-white font-medium truncate">${esc(aluno.nome)}</span>
+    <span class="text-neutral-500">ID #${esc(aluno.id)}</span>
+  </div>
+  <button class="shrink-0 px-2 h-8 border border-[#FF3344]/60 text-[#FF3344] uppercase text-[11px] hover:bg-[#FF3344] hover:text-white transition-colors cursor-pointer"
+          onclick="expulsarAluno('${esc(cursoId)}', '${esc(aluno.id)}')"
+          title="Remover do curso">
+    Expulsar
+  </button>`;
         corpo.appendChild(li);
       });
     }

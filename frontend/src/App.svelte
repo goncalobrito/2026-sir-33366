@@ -1,7 +1,7 @@
 <script>
   import { onMount } from 'svelte';
 
-  const API_URL = 'https://two026-ei-sir-33157.onrender.com';
+  const API_URL = 'https://api-escola-sir.onrender.com';
 
   // --- ESTADOS REATIVOS COM RUNES (Svelte 5) ---
   let cursos = $state([]);
